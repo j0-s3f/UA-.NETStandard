@@ -33,6 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Extensions.Logging;
 using Opc.Ua;
 using Opc.Ua.Server;
 using Quickstarts.Servers.LiHaSystem;
@@ -69,12 +70,11 @@ namespace Quickstarts.ReferenceServer
 
             // create the custom node manager.
             // nodeManagers.Add(new ReferenceNodeManager(server, configuration));
-            nodeManagers.Add(new LiHaSystemNodeManager(server, configuration));
-            //
-            // foreach (var nodeManagerFactory in NodeManagerFactories)
-            // {
-            //     nodeManagers.Add(nodeManagerFactory.Create(server, configuration));
-            // }
+
+            foreach (var nodeManagerFactory in NodeManagerFactories)
+            {
+                nodeManagers.Add(nodeManagerFactory.Create(server, configuration));
+            }
 
             // create master node manager.
             return new MasterNodeManager(server, configuration, null, nodeManagers.ToArray());
@@ -156,11 +156,35 @@ namespace Quickstarts.ReferenceServer
                 {
                     // allow a faster sampling interval for CurrentTime node.
                     ServerInternal.Status.Variable.CurrentTime.MinimumSamplingInterval = 250;
+
+                    RemoveElementFromProgramManager();
                 }
             }
             catch
             { }
 
+        }
+
+        private void RemoveElementFromProgramManager()
+        {
+            var programTemplateSetNodeId = spectaris.LiHa.Objects.DeviceSet_LiHaDevice_FunctionalUnitSet_LiHaUnit_ProgramManager_ProgramTemplateSet;
+            // var programManagerNodeId = spectaris.LiHa.Objects.DeviceSet_LiHaDevice_FunctionalUnitSet_LiHaUnit_ProgramManager;
+
+            var nodeId = new NodeId(programTemplateSetNodeId, 10);
+
+            var programTemplateSetNode = ServerInternal.CoreNodeManager.GetLocalNode(nodeId);
+
+            var a = programTemplateSetNode.References;
+            if (programTemplateSetNode != null)
+            {
+                Utils.Log(LogLevel.Debug, programTemplateSetNode.DisplayName.Text);
+
+                // programTemplateSetNode.Write(Opc.Ua.Attributes.Value, new DataValue(new Variant(value)));
+            }
+
+            var nodeIdToDelete = new NodeId(5034, 10);
+
+            ServerInternal.CoreNodeManager.DeleteNode(nodeIdToDelete, true, false);
         }
 
         /// <summary>
