@@ -35,6 +35,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using Opc.Ua;
 using Opc.Ua.Server;
+using Quickstarts.Servers.LiHaSystem;
 
 namespace Quickstarts.ReferenceServer
 {
@@ -68,6 +69,7 @@ namespace Quickstarts.ReferenceServer
 
             // create the custom node manager.
             // nodeManagers.Add(new ReferenceNodeManager(server, configuration));
+            nodeManagers.Add(new LiHaSystemNodeManager(server, configuration));
             //
             // foreach (var nodeManagerFactory in NodeManagerFactories)
             // {

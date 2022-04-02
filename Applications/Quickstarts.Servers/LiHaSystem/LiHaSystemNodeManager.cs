@@ -32,7 +32,7 @@ namespace Quickstarts.Servers.LiHaSystem
     public class LiHaSystemNodeManager: SampleNodeManager
     {
         private LiHaConfiguration m_configuration;
-        private ushort m_namespaceIndex;
+        private ushort m_namespaceIndex = 42;
         private long m_lastUsedId;
         private IServerInternal _server;
 
@@ -46,14 +46,15 @@ namespace Quickstarts.Servers.LiHaSystem
         {
             _server = server;
 
-            List<string> namespaceUris = new List<string>();
-
-            namespaceUris.Add(Namespaces.LiHa);
-            namespaceUris.Add(Namespaces.LiHa + "/Instance");
-
-            NamespaceUris = namespaceUris;
-
-            m_namespaceIndex = Server.NamespaceUris.GetIndexOrAppend(namespaceUris[1]);
+            // todo: Important! namespaces of imported nodes (in server) cant be used here -> BadNodeId Error
+            // List<string> namespaceUris = new List<string>();
+            //
+            // namespaceUris.Add(Namespaces.LiHa);
+            // namespaceUris.Add(Namespaces.LiHa + "/Instance");
+            //
+            // NamespaceUris = namespaceUris;
+            //
+            // m_namespaceIndex = Server.NamespaceUris.GetIndexOrAppend(namespaceUris[1]);
 
             // AddEncodeableNodeManagerTypes(typeof(LiHaSystemNodeManager).Assembly, typeof(LiHaSystemNodeManager).Namespace);
 
