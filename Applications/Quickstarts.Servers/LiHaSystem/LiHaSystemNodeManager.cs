@@ -146,16 +146,17 @@ namespace Quickstarts.Servers.LiHaSystem
             {
                 Opc.Ua.Export.UANodeSet nodeSet = Opc.Ua.Export.UANodeSet.Read(stream);
 
-                //SystemContext.NamespaceUris.Append(nodeSet.NamespaceUris.ToString());
+                SystemContext.NamespaceUris.Append(nodeSet.NamespaceUris.ToString());
 
                 nodeSet.Import(_server.DefaultSystemContext, predefinedNodes);
 
                 _server.CoreNodeManager.ImportNodes(_server.DefaultSystemContext, predefinedNodes);
+
                 // for (int ii = 0; ii < predefinedNodes.Count; ii++)
                 // {
                 //     AddPredefinedNode(SystemContext, predefinedNodes[ii]);
                 // }
-                // // ensure the reverse refernces exist.
+                // // ensure the reverse references exist.
                 // AddReverseReferences(externalReferences);
             }
         }
