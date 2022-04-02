@@ -2,7 +2,7 @@
  * Copyright (c) 2005-2019 The OPC Foundation, Inc. All rights reserved.
  *
  * OPC Foundation MIT License 1.00
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -11,7 +11,7 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
@@ -41,30 +41,30 @@ using System.Linq;
 
 namespace TestData
 {
-    /// <summary>
-    /// The node manager factory for test data.
-    /// </summary>
-    public class TestDataNodeManagerFactory : INodeManagerFactory
-    {
-        /// <inheritdoc/>
-        public INodeManager Create(IServerInternal server, ApplicationConfiguration configuration)
-        {
-            return new TestDataNodeManager(server, configuration);
-        }
-
-        /// <inheritdoc/>
-        public StringCollection NamespacesUris
-        {
-            get
-            {
-                var nameSpaces = new StringCollection {
-                    Namespaces.TestData,
-                    Namespaces.TestData + "Instance"
-                };  
-                return nameSpaces;
-            }
-        }
-    }
+    // <summary>
+    // The node manager factory for test data.
+    // </summary>
+    // public class TestDataNodeManagerFactory : INodeManagerFactory
+    // {
+    //     /// <inheritdoc/>
+    //     public INodeManager Create(IServerInternal server, ApplicationConfiguration configuration)
+    //     {
+    //         return new TestDataNodeManager(server, configuration);
+    //     }
+    //
+    //     /// <inheritdoc/>
+    //     public StringCollection NamespacesUris
+    //     {
+    //         get
+    //         {
+    //             var nameSpaces = new StringCollection {
+    //                 Namespaces.TestData,
+    //                 Namespaces.TestData + "Instance"
+    //             };
+    //             return nameSpaces;
+    //         }
+    //     }
+    // }
 
     /// <summary>
     /// A node manager for a variety of test data.
@@ -147,7 +147,7 @@ namespace TestData
         /// <remarks>
         /// The externalReferences is an out parameter that allows the node manager to link to nodes
         /// in other node managers. For example, the 'Objects' node is managed by the CoreNodeManager and
-        /// should have a reference to the root folder node(s) exposed by this node manager.  
+        /// should have a reference to the root folder node(s) exposed by this node manager.
         /// </remarks>
         public override void CreateAddressSpace(IDictionary<NodeId, IList<IReference>> externalReferences)
         {
@@ -650,7 +650,7 @@ namespace TestData
             lock (Lock)
             {
                 try
-                {  
+                {
                     // create the dialog.
                     if (m_dialog == null)
                     {
@@ -665,7 +665,7 @@ namespace TestData
 
                         m_dialog.OnAfterResponse = OnDialogComplete;
                     }
-        
+
                     StatusCode systemStatus = m_system.SystemStatus;
                     m_systemStatusCondition.UpdateStatus(systemStatus);
 
@@ -690,12 +690,12 @@ namespace TestData
                     if (StatusCode.IsBad(systemStatus))
                     {
                         m_dialog.RequestResponse(
-                            SystemContext, 
-                            "Reset the test system?", 
+                            SystemContext,
+                            "Reset the test system?",
                             (uint)(int)(DialogConditionChoice.Ok | DialogConditionChoice.Cancel),
                             (ushort)EventSeverity.MediumHigh);
                     }
-                                        
+
                     // report the event.
                     TranslationInfo info = new TranslationInfo(
                         "TestSystemStatusChange",
@@ -722,8 +722,8 @@ namespace TestData
         /// Handles a user response to a dialog.
         /// </summary>
         private ServiceResult OnDialogComplete(
-            ISystemContext context, 
-            DialogConditionState dialog, 
+            ISystemContext context,
+            DialogConditionState dialog,
             DialogConditionChoice response)
         {
             if (m_dialog != null)

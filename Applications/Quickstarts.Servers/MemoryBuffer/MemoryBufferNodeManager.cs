@@ -2,7 +2,7 @@
  * Copyright (c) 2005-2019 The OPC Foundation, Inc. All rights reserved.
  *
  * OPC Foundation MIT License 1.00
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -11,7 +11,7 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
@@ -41,30 +41,30 @@ using System.Reflection;
 
 namespace MemoryBuffer
 {
-    /// <summary>
-    /// The factory to create the node manager for memory buffers.
-    /// </summary>
-    public class MemoryBufferNodeManagerFactory : INodeManagerFactory
-    {
-        /// <inheritdoc/>
-        public INodeManager Create(IServerInternal server, ApplicationConfiguration configuration)
-        {
-            return new MemoryBufferNodeManager(server, configuration);
-        }
-
-        /// <inheritdoc/>
-        public StringCollection NamespacesUris
-        {
-            get
-            {
-                var nameSpaces = new StringCollection {
-                    Namespaces.MemoryBuffer,
-                    Namespaces.MemoryBuffer + "/Instance"
-                };
-                return nameSpaces;
-            }
-        }
-    }
+    // <summary>
+    // The factory to create the node manager for memory buffers.
+    // </summary>
+    // public class MemoryBufferNodeManagerFactory : INodeManagerFactory
+    // {
+    //     /// <inheritdoc/>
+    //     public INodeManager Create(IServerInternal server, ApplicationConfiguration configuration)
+    //     {
+    //         return new MemoryBufferNodeManager(server, configuration);
+    //     }
+    //
+    //     /// <inheritdoc/>
+    //     public StringCollection NamespacesUris
+    //     {
+    //         get
+    //         {
+    //             var nameSpaces = new StringCollection {
+    //                 Namespaces.MemoryBuffer,
+    //                 Namespaces.MemoryBuffer + "/Instance"
+    //             };
+    //             return nameSpaces;
+    //         }
+    //     }
+    // }
 
     /// <summary>
     /// A node manager for a variety of memory buffers.
@@ -80,10 +80,10 @@ namespace MemoryBuffer
             base(server)
         {
             List<string> namespaceUris = new List<string>();
-         
+
             namespaceUris.Add(Namespaces.MemoryBuffer);
             namespaceUris.Add(Namespaces.MemoryBuffer + "/Instance");
-            
+
             NamespaceUris = namespaceUris;
 
             AddEncodeableNodeManagerTypes(typeof(MemoryBufferNodeManager).Assembly, typeof(MemoryBufferNodeManager).Namespace);
@@ -108,21 +108,21 @@ namespace MemoryBuffer
         /// <remarks>
         /// The externalReferences is an out parameter that allows the node manager to link to nodes
         /// in other node managers. For example, the 'Objects' node is managed by the CoreNodeManager and
-        /// should have a reference to the root folder node(s) exposed by this node manager.  
+        /// should have a reference to the root folder node(s) exposed by this node manager.
         /// </remarks>
         public override void CreateAddressSpace(IDictionary<NodeId, IList<IReference>> externalReferences)
         {
             lock (Lock)
             {
                 base.CreateAddressSpace(externalReferences);
-                
+
                 // create the nodes from configuration.
                 ushort namespaceIndex = Server.NamespaceUris.GetIndexOrAppend(Namespaces.MemoryBuffer);
 
                 BaseInstanceState root = (BaseInstanceState)FindPredefinedNode(
-                    new NodeId(Objects.MemoryBuffers, namespaceIndex), 
+                    new NodeId(Objects.MemoryBuffers, namespaceIndex),
                     typeof(BaseInstanceState));
-                        
+
                 // create the nodes from configuration.
                 namespaceIndex = Server.NamespaceUris.GetIndexOrAppend(Namespaces.MemoryBuffer + "/Instance");
 
@@ -137,12 +137,12 @@ namespace MemoryBuffer
 
                         // assign node ids.
                         bufferNode.Create(
-                            SystemContext, 
-                            new NodeId(bufferNode.SymbolicName, namespaceIndex), 
+                            SystemContext,
+                            new NodeId(bufferNode.SymbolicName, namespaceIndex),
                             new QualifiedName(bufferNode.SymbolicName, namespaceIndex),
-                            null, 
+                            null,
                             true);
-                        
+
                         bufferNode.CreateBuffer(instance.DataType, instance.TagCount);
                         bufferNode.InitializeMonitoring(Server, this);
 
@@ -181,7 +181,7 @@ namespace MemoryBuffer
         /// Returns a unique handle for the node.
         /// </summary>
         /// <remarks>
-        /// This must efficiently determine whether the node belongs to the node manager. If it does belong to 
+        /// This must efficiently determine whether the node belongs to the node manager. If it does belong to
         /// NodeManager it should return a handle that does not require the NodeId to be validated again when
         /// the handle is passed into other methods such as 'Read' or 'Write'.
         /// </remarks>
@@ -200,7 +200,7 @@ namespace MemoryBuffer
                 {
                     // check for a reference to the buffer.
                     MemoryBufferState buffer = null;
- 
+
                     if (m_buffers.TryGetValue(id, out buffer))
                     {
                         return buffer;
@@ -245,12 +245,12 @@ namespace MemoryBuffer
                     {
                         return null;
                     }
-                    
+
                     // the tags contain all of the metadata required to support the UA
                     // operations and pointers to functions in the buffer object that
                     // allow the value to be accessed. These tags are ephemeral and are
                     // discarded after the operation completes. This design pattern allows
-                    // the server to expose potentially millions of UA nodes without 
+                    // the server to expose potentially millions of UA nodes without
                     // creating millions of objects that reside in memory.
                     return new MemoryTagState(buffer, offset);
                 }
@@ -308,7 +308,7 @@ namespace MemoryBuffer
             {
                 return StatusCodes.BadFilterNotAllowed;
             }
-            
+
             // index range not supported.
             if (itemToCreate.ItemToMonitor.ParsedIndexRange != NumericRange.Empty)
             {
@@ -359,7 +359,7 @@ namespace MemoryBuffer
             {
                 samplingInterval = publishingInterval;
             }
-            
+
             // create the item.
             MemoryBufferMonitoredItem datachangeItem = buffer.CreateDataChangeItem(
                 context as ServerSystemContext,
@@ -439,7 +439,7 @@ namespace MemoryBuffer
                 itemToModify.RequestedParameters.SamplingInterval);
 
             return ServiceResult.Good;
-        }       
+        }
 
         /// <summary>
         /// Deletes a monitored item.
@@ -485,7 +485,7 @@ namespace MemoryBuffer
         protected override ServiceResult SetMonitoringMode(
             ISystemContext context,
             IMonitoredItem monitoredItem,
-            MonitoringMode monitoringMode, 
+            MonitoringMode monitoringMode,
             out bool processed)
         {
             processed = false;
@@ -515,7 +515,7 @@ namespace MemoryBuffer
 
             // delete the item.
             MonitoringMode previousMode = datachangeItem.SetMonitoringMode(monitoringMode);
-            
+
             // need to provide an immediate update after enabling.
             if (previousMode == MonitoringMode.Disabled && monitoringMode != MonitoringMode.Disabled)
             {
@@ -525,7 +525,7 @@ namespace MemoryBuffer
                 initialValue.ServerTimestamp = DateTime.UtcNow;
                 initialValue.SourceTimestamp = DateTime.MinValue;
                 initialValue.StatusCode = StatusCodes.Good;
-                
+
                 MemoryTagState tag = new MemoryTagState(buffer, datachangeItem.Offset);
 
                 ServiceResult error = tag.ReadAttribute(
@@ -537,7 +537,7 @@ namespace MemoryBuffer
 
                 datachangeItem.QueueValue(initialValue, error);
             }
-            
+
             return ServiceResult.Good;
         }
         #endregion

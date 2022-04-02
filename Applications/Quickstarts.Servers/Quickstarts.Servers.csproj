@@ -19,6 +19,14 @@
   
   <ItemGroup>
     <EmbeddedResource Include="TestData\TestData.PredefinedNodes.uanodes;MemoryBuffer\MemoryBuffer.PredefinedNodes.uanodes;Boiler\Boiler.PredefinedNodes.uanodes" />
+    <None Remove="LiHaSystem\Opc.Ua.Machinery.NodeSet2.xml" />
+    <EmbeddedResource Include="LiHaSystem\Opc.Ua.Machinery.NodeSet2.xml" />
+    <None Remove="LiHaSystem\Opc.Ua.Di.NodeSet2.xml" />
+    <EmbeddedResource Include="LiHaSystem\Opc.Ua.Di.NodeSet2.xml" />
+    <None Remove="LiHaSystem\lads.xml" />
+    <EmbeddedResource Include="LiHaSystem\lads.xml" />
+    <None Remove="LiHaSystem\lihasystem.xml" />
+    <EmbeddedResource Include="LiHaSystem\lihasystem.xml" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,7 +2,7 @@
  * Copyright (c) 2005-2020 The OPC Foundation, Inc. All rights reserved.
  *
  * OPC Foundation MIT License 1.00
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -11,7 +11,7 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
@@ -64,6 +64,7 @@ namespace Quickstarts.ReferenceServer
             }
 
             m_dynamicNodes = new List<BaseDataVariableState>();
+            m_simulationTimer = new Timer(DoSimulation, null, 1000, 1000);
         }
         #endregion
 
@@ -165,6 +166,8 @@ namespace Quickstarts.ReferenceServer
         }
         #endregion
 
+        private bool bTrue = true;
+
         #region INodeManager Members
         /// <summary>
         /// Does any initialization required before the address space can be used.
@@ -172,10 +175,13 @@ namespace Quickstarts.ReferenceServer
         /// <remarks>
         /// The externalReferences is an out parameter that allows the node manager to link to nodes
         /// in other node managers. For example, the 'Objects' node is managed by the CoreNodeManager and
-        /// should have a reference to the root folder node(s) exposed by this node manager.  
+        /// should have a reference to the root folder node(s) exposed by this node manager.
         /// </remarks>
         public override void CreateAddressSpace(IDictionary<NodeId, IList<IReference>> externalReferences)
         {
+            if (bTrue)
+                return;
+
             lock (Lock)
             {
                 IList<IReference> references = null;
@@ -2713,7 +2719,7 @@ namespace Quickstarts.ReferenceServer
         {
             lock (Lock)
             {
-                // quickly exclude nodes that are not in the namespace. 
+                // quickly exclude nodes that are not in the namespace.
                 if (!IsNodeIdInNamespace(nodeId))
                 {
                     return null;
