@@ -2,7 +2,7 @@
  * Copyright (c) 2005-2020 The OPC Foundation, Inc. All rights reserved.
  *
  * OPC Foundation MIT License 1.00
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -11,7 +11,7 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
@@ -44,7 +45,7 @@ namespace Quickstarts.ReferenceServer
     /// Each server instance must have one instance of a StandardServer object which is
     /// responsible for reading the configuration file, creating the endpoints and dispatching
     /// incoming requests to the appropriate handler.
-    /// 
+    ///
     /// This sub-class specifies non-configurable metadata such as Product Name and initializes
     /// the EmptyNodeManager which provides access to the data exposed by the Server.
     /// </remarks>
@@ -66,12 +67,12 @@ namespace Quickstarts.ReferenceServer
             IList<INodeManager> nodeManagers = new List<INodeManager>();
 
             // create the custom node manager.
-            nodeManagers.Add(new ReferenceNodeManager(server, configuration));
-
-            foreach (var nodeManagerFactory in NodeManagerFactories)
-            {
-                nodeManagers.Add(nodeManagerFactory.Create(server, configuration));
-            }
+            // nodeManagers.Add(new ReferenceNodeManager(server, configuration));
+            //
+            // foreach (var nodeManagerFactory in NodeManagerFactories)
+            // {
+            //     nodeManagers.Add(nodeManagerFactory.Create(server, configuration));
+            // }
 
             // create master node manager.
             return new MasterNodeManager(server, configuration, null, nodeManagers.ToArray());
@@ -120,10 +121,46 @@ namespace Quickstarts.ReferenceServer
         }
 
         /// <summary>
+        /// Initializes the address space after the NodeManagers have started.
+        /// </summary>
+        /// <remarks>
+        /// This method can be used to create any initialization that requires access to node managers.
+        /// </remarks>
+        protected override void OnNodeManagerStarted(IServerInternal server)
+        {
+            // allow base class processing to happen first.
+            base.OnNodeManagerStarted(server);
+
+            LoadLADSNodeSet(server);
+        }
+
+        private void LoadLADSNodeSet(IServerInternal server)
+        {
+            LoadNodeSetIntoServer(server, @"C:\Softwareentwicklung\UA-.NETStandard\Applications\Quickstarts.Servers\LiHaSystem\Opc.Ua.Di.NodeSet2.xml");
+            LoadNodeSetIntoServer(server, @"C:\Softwareentwicklung\UA-.NETStandard\Applications\Quickstarts.Servers\LiHaSystem\Opc.Ua.Machinery.NodeSet2.xml");
+            LoadNodeSetIntoServer(server, @"C:\Softwareentwicklung\UA-.NETStandard\Applications\Quickstarts.Servers\LiHaSystem\lads.xml");
+            LoadNodeSetIntoServer(server, @"C:\Softwareentwicklung\UA-.NETStandard\Applications\Quickstarts.Servers\LiHaSystem\lihasystem.xml");
+        }
+
+        private static void LoadNodeSetIntoServer(IServerInternal server, string filePath)
+        {
+            NodeStateCollection nodeStates = new NodeStateCollection();
+
+            // load as node set.
+            using (Stream fileStream = File.Open(filePath, FileMode.Open))
+            {
+                Opc.Ua.Export.UANodeSet nodeSet = Opc.Ua.Export.UANodeSet.Read(fileStream);
+
+                nodeSet.Import(server.DefaultSystemContext, nodeStates);
+                server.CoreNodeManager.ImportNodes(server.DefaultSystemContext, nodeStates);
+            }
+        }
+
+        /// <summary>
         /// Initializes the server before it starts up.
         /// </summary>
         /// <remarks>
-        /// This method is called before any startup processing occurs. The sub-class may update the 
+        /// This method is called before any startup processing occurs. The sub-class may update the
         /// configuration object or do any other application specific startup tasks.
         /// </remarks>
         protected override void OnServerStarting(ApplicationConfiguration configuration)

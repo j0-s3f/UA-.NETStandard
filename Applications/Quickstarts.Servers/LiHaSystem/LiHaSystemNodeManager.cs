@@ -34,6 +34,8 @@ namespace Quickstarts.Servers.LiHaSystem
         private LiHaConfiguration m_configuration;
         private ushort m_namespaceIndex;
         private long m_lastUsedId;
+        private IServerInternal _server;
+
 
         #region Constructors
         /// <summary>
@@ -42,6 +44,8 @@ namespace Quickstarts.Servers.LiHaSystem
         public LiHaSystemNodeManager(IServerInternal server, ApplicationConfiguration configuration)
             : base(server)
         {
+            _server = server;
+
             List<string> namespaceUris = new List<string>();
 
             namespaceUris.Add(Namespaces.LiHa);
@@ -51,7 +55,7 @@ namespace Quickstarts.Servers.LiHaSystem
 
             m_namespaceIndex = Server.NamespaceUris.GetIndexOrAppend(namespaceUris[1]);
 
-            AddEncodeableNodeManagerTypes(typeof(LiHaSystemNodeManager).Assembly, typeof(LiHaSystemNodeManager).Namespace);
+            // AddEncodeableNodeManagerTypes(typeof(LiHaSystemNodeManager).Assembly, typeof(LiHaSystemNodeManager).Namespace);
 
             // get the configuration for the node manager.
             m_configuration = configuration.ParseExtension<LiHaConfiguration>();
@@ -93,7 +97,7 @@ namespace Quickstarts.Servers.LiHaSystem
         {
             lock (Lock)
             {
-                LoadLiHaSystemNodeSets(externalReferences);
+                // LoadLiHaSystemNodeSets(externalReferences);
                 base.CreateAddressSpace(externalReferences);
             }
         }
@@ -137,18 +141,22 @@ namespace Quickstarts.Servers.LiHaSystem
         {
             NodeStateCollection predefinedNodes = new NodeStateCollection();
 
-            Stream stream = new FileStream(resourcepath, FileMode.Open);
-            Opc.Ua.Export.UANodeSet nodeSet = Opc.Ua.Export.UANodeSet.Read(stream);
-
-            SystemContext.NamespaceUris.Append(nodeSet.NamespaceUris.ToString());
-            nodeSet.Import(SystemContext, predefinedNodes);
-
-            for (int ii = 0; ii < predefinedNodes.Count; ii++)
+            using (Stream stream = new FileStream(resourcepath, FileMode.Open))
             {
-                AddPredefinedNode(SystemContext, predefinedNodes[ii]);
+                Opc.Ua.Export.UANodeSet nodeSet = Opc.Ua.Export.UANodeSet.Read(stream);
+
+                //SystemContext.NamespaceUris.Append(nodeSet.NamespaceUris.ToString());
+
+                nodeSet.Import(_server.DefaultSystemContext, predefinedNodes);
+
+                _server.CoreNodeManager.ImportNodes(_server.DefaultSystemContext, predefinedNodes);
+                // for (int ii = 0; ii < predefinedNodes.Count; ii++)
+                // {
+                //     AddPredefinedNode(SystemContext, predefinedNodes[ii]);
+                // }
+                // // ensure the reverse refernces exist.
+                // AddReverseReferences(externalReferences);
             }
-            // ensure the reverse refernces exist.
-            AddReverseReferences(externalReferences);
         }
 
         /// <summary>
