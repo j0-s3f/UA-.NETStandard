@@ -98,7 +98,7 @@ namespace Quickstarts.Servers.LiHaSystem
         {
             lock (Lock)
             {
-                // LoadLiHaSystemNodeSets(externalReferences);
+                LoadLiHaSystemNodeSets(externalReferences);
                 base.CreateAddressSpace(externalReferences);
             }
         }
